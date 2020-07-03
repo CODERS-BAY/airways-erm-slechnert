@@ -1,0 +1,110 @@
+CREATE TABLE passengers(
+	passenger_number int(12),
+	first_name varchar(20),
+	last_name varchar(20),
+	mr_mrs tinyint(1),
+	title varchar(20),
+	PRIMARY KEY (passenger_number)
+);
+
+CREATE TABLE airports(
+	airport_code int(3),
+	city varchar(20),
+	country varchar(20),
+	capacity int(3),
+	PRIMARY KEY (airport_code)
+);
+
+CREATE TABLE airlines(
+	airline_code int(3),
+	headquarters varchar(20),
+	name varchar(20),
+	PRIMARY KEY (airline_code)
+);
+
+CREATE TABLE aircraft_types(
+	aircraft_type_id int(12),
+	manufacturer varchar(20),
+	range_miles int(5),
+	max_seats int(3),
+	PRIMARY KEY (aircraft_type_id)
+);
+
+CREATE TABLE aircrafts(
+	international_registration_number int(12),
+	aircraft_type int(12),
+	airline int(3),
+	name varchar(20),
+	date_of_service_entry date,
+	seats_economy int(3),
+	seats_business int(3),
+	PRIMARY KEY (international_registration_number),
+	FOREIGN KEY (aircraft_type) REFERENCES aircraft_types(aircraft_type_id),
+	FOREIGN KEY (airline) REFERENCES airlines(airline_code)
+);
+
+CREATE TABLE flights(
+	flight_id int(12),
+	departure_airport int(3),
+	arrival_airport int(3),
+	distance_miles int(5),
+	PRIMARY KEY (flight_id),
+	FOREIGN KEY (departure_airport) REFERENCES airports(airport_code),
+	FOREIGN KEY (arrival_airport) REFERENCES airports(airport_code)
+);
+
+CREATE TABLE flight_plan(
+	flight_plan_id int(12),
+	flight int(12),
+	departure_time time,
+	arrival_time time,
+	weekly_schedule_code varchar(7),
+	aircraft int(12),
+	PRIMARY KEY (flight_plan_id),
+	FOREIGN KEY (flight) REFERENCES flights(flight_id),
+	FOREIGN KEY (aircraft) REFERENCES aircrafts(international_registration_number)
+);
+
+CREATE TABLE flight_schedule(
+	flight_serial int(12),
+	flight_plan_id int(12),
+	departure_day date,
+	actual_departure datetime,
+	actual_arrival datetime,
+	PRIMARY KEY (flight_serial),
+	FOREIGN KEY (flight_plan_id) REFERENCES flight_plan(flight_plan_id)
+);
+
+CREATE TABLE seat_plan(
+	seat_id varchar(3),
+	flight_serial int(12),
+	seat_loc varchar(1),
+	seat_class varchar(1),
+	row int(3),
+	taken tinyint(1),
+	PRIMARY KEY (seat_id),
+	FOREIGN KEY (flight_serial) REFERENCES flight_schedule(flight_serial)
+);
+
+CREATE TABLE ticket_plan(
+	ticket_id int(12),
+	passenger int(12),
+	issue_date date,
+	seat_id varchar(3),
+	currency varchar(10),
+	sales_office varchar(20),
+	PRIMARY KEY (ticket_id),
+	FOREIGN KEY (seat_id) REFERENCES seat_plan(seat_id),
+	FOREIGN KEY (passenger) REFERENCES passengers(passenger_number)
+);
+
+CREATE TABLE boarding_ticket(
+	boarding_id int(12),
+	ticket_id int(12),
+	flight_serial int(12),
+	seat_id varchar(3),
+	PRIMARY KEY (boarding_id),
+	FOREIGN KEY (ticket_id) REFERENCES ticket_plan(ticket_id),
+	FOREIGN KEY (flight_serial) REFERENCES flight_schedule(flight_serial),
+	FOREIGN KEY (seat_id) REFERENCES seat_plan(seat_id)
+);
