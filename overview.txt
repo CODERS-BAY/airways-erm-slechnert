@@ -1,0 +1,13 @@
+
+Cinemas(cinema_id, name, address)
+Halls(hall nr, hall id, cinema, rows, seats)
+Seating Plans(hall, row, seat, is_box, standard price)
+Actors(actor id, surname, first name, nationality, date of birth, date of death, comments)
+Films(film id, title, genre, year of production, country, language, duration, distribution, director)
+Film Casts(film id, actor id)
+Screening plan(film id, hall id, Screening time, show_id)
+
+Tickets(cinema, hall, film title, date, starting time, serial number, seat, row, price)
+
+
+
